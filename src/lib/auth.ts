@@ -54,8 +54,23 @@ export interface LoginResponse {
   user: AuthUser
 }
 
-export async function loginApi(email: string, password: string): Promise<LoginResponse> {
-  const res = await fetch(`${API_BASE}/auth/login`, {
+export async function getMeApi(
+  token: string,
+  fetchFn: typeof fetch = fetch,
+): Promise<AuthUser> {
+  const res = await fetchFn(`${API_BASE}/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  if (!res.ok) throw new Error(`GET /auth/me failed: ${res.status}`)
+  return res.json() as Promise<AuthUser>
+}
+
+export async function loginApi(
+  email: string,
+  password: string,
+  fetchFn: typeof fetch = fetch,
+): Promise<LoginResponse> {
+  const res = await fetchFn(`${API_BASE}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
