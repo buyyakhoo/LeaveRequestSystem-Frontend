@@ -5,7 +5,8 @@
 
   let { form, data }: { form: ActionData; data: PageData } = $props()
 
-  let email = $state(form?.email ?? '')
+  let email = $state('')
+  $effect(() => { email = form?.email ?? '' })
   let password = $state('')
   let showPassword = $state(false)
   let isLoading = $state(false)

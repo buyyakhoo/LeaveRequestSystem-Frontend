@@ -47,6 +47,7 @@ export interface AuthUser {
   first_name: string
   last_name: string
   role: string
+  departments?: { id: number; name: string } | null
 }
 
 export interface LoginResponse {
