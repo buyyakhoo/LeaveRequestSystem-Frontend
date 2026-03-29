@@ -3,8 +3,7 @@
   import type { ActionData, PageData } from './$types'
   import { Eye, EyeOff, CircleAlert, CircleCheck, Info } from 'lucide-svelte'
   import { validatePassword } from '$lib/auth'
-  import Sidebar from '$lib/components/Sidebar.svelte'
-  import TopBar from '$lib/components/TopBar.svelte'
+  import AppLayout from '$lib/components/AppLayout.svelte'
 
   let { form, data }: { form: ActionData; data: PageData } = $props()
 
@@ -37,15 +36,8 @@
   <title>เพิ่มพนักงาน — Leave Request System</title>
 </svelte:head>
 
-<div class="flex h-screen overflow-hidden">
-
-  <Sidebar {user} />
-
-  <div class="flex-1 flex flex-col min-w-0 bg-base-200">
-    <TopBar title="เพิ่มพนักงาน" />
-
-    <main class="flex-1 p-6 overflow-y-auto">
-      <div class="max-w-2xl mx-auto space-y-4">
+<AppLayout {user} title="เพิ่มพนักงาน">
+  <div class="max-w-2xl mx-auto space-y-4">
 
         <!-- Info: department is auto-assigned -->
         <div role="alert" class="alert alert-info">
@@ -245,8 +237,5 @@
           </div>
         </div>
 
-      </div>
-    </main>
   </div>
-
-</div>
+</AppLayout>

@@ -1,8 +1,7 @@
 import { redirect, fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 import { AUTH_COOKIE } from '$lib/auth'
-
-const API_BASE = 'http://localhost:3000'
+import { API_BASE } from '$env/static/private'
 
 export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
   if (!locals.user) redirect(302, '/auth')

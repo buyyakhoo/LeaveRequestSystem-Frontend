@@ -37,9 +37,7 @@ export function validatePassword(password: string): PasswordValidationResult {
   return { valid: errors.length === 0, errors }
 }
 
-// ─── API ──────────────────────────────────────────────────────────────────────
-const API_BASE = 'http://localhost:3000'
-
+// ─── Types ────────────────────────────────────────────────────────────────────
 export interface AuthUser {
   id: number
   employee_code: string
@@ -55,36 +53,6 @@ export interface LoginResponse {
   user: AuthUser
 }
 
-export async function getMeApi(
-  token: string,
-  fetchFn: typeof fetch = fetch,
-): Promise<AuthUser> {
-  const res = await fetchFn(`${API_BASE}/auth/me`, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-  if (!res.ok) throw new Error(`GET /auth/me failed: ${res.status}`)
-  return res.json() as Promise<AuthUser>
-}
-
-export async function loginApi(
-  email: string,
-  password: string,
-  fetchFn: typeof fetch = fetch,
-): Promise<LoginResponse> {
-  const res = await fetchFn(`${API_BASE}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  })
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}))
-    throw new Error((body as { message?: string }).message ?? 'Login failed')
-  }
-
-  return res.json() as Promise<LoginResponse>
-}
-
 // ─── JWT decode (no signature verification — trust the backend) ───────────────
 export interface JwtPayload {
   sub: number
@@ -97,7 +65,7 @@ export function decodeToken(token: string): JwtPayload | null {
   try {
     const base64Url = token.split('.')[1]
     if (!base64Url) return null
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+    const base64 = base64Url.replaceAll('-', '+').replaceAll('_', '/')
     return JSON.parse(atob(base64)) as JwtPayload
   } catch {
     return null

@@ -1,6 +1,7 @@
 import { redirect, fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
-import { loginApi, decodeToken, AUTH_COOKIE, USER_COOKIE } from '$lib/auth'
+import { decodeToken, AUTH_COOKIE, USER_COOKIE } from '$lib/auth'
+import { loginApi } from '$lib/server/api'
 
 const oauthErrorMessages: Record<string, string> = {
   not_employee: 'This Google account is not registered as an employee.',

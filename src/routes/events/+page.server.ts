@@ -1,8 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 import { AUTH_COOKIE } from '$lib/auth'
-
-const API_BASE = 'http://localhost:3000'
+import { API_BASE } from '$env/static/private'
 
 export interface EventLog {
   id: string
@@ -15,6 +14,8 @@ export interface EventLog {
   result: string
   timestamp: string
   actor: { email: string } | null
+  // enriched on server
+  target_email?: string | null
 }
 
 export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
@@ -24,17 +25,43 @@ export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
   }
 
   const token = cookies.get(AUTH_COOKIE)
-  let logs: EventLog[] = []
+  const headers = { Authorization: `Bearer ${token}` }
 
-  const res = await fetch(`${API_BASE}/event-logs?limit=100`, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-  if (res.ok) {
-    const body = await res.json() as { data: EventLog[] }
+  const [logsRes, leavesRes] = await Promise.all([
+    fetch(`${API_BASE}/event-logs?limit=100`, { headers }),
+    fetch(`${API_BASE}/leaves`, { headers }),
+  ])
+
+  let logs: EventLog[] = []
+  if (logsRes.ok) {
+    const body = await logsRes.json() as { data: EventLog[] }
     logs = body.data
   } else {
-    console.error('[/events] API error:', res.status, await res.text())
+    console.error('[/events] logs API error:', logsRes.status, await logsRes.text())
   }
+
+  // Build leaveId → employee email map
+  const leaveEmailMap = new Map<string, string>()
+  if (leavesRes.ok) {
+    const body = await leavesRes.json() as {
+      data: { id: string; employee: { email: string } | null }[]
+    }
+    for (const leave of body.data) {
+      if (leave.employee?.email) {
+        leaveEmailMap.set(leave.id, leave.employee.email)
+      }
+    }
+  }
+
+  // Enrich logs: for leave actions, resolve email from detail or leaveEmailMap
+  logs = logs.map(log => {
+    if (log.target_type !== 'leave_request') return log
+    const email =
+      (log.detail?.email as string | undefined) ??
+      (log.target_id ? leaveEmailMap.get(log.target_id) : null) ??
+      null
+    return { ...log, target_email: email }
+  })
 
   return { user: locals.user, logs }
 }
