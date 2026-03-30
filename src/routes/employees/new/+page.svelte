@@ -1,9 +1,10 @@
 <script lang="ts">
   import { enhance, applyAction } from '$app/forms'
   import type { ActionData, PageData } from './$types'
-  import { Eye, EyeOff, CircleAlert, CircleCheck, Info } from 'lucide-svelte'
   import { validatePassword } from '$lib/auth'
   import AppLayout from '$lib/components/AppLayout.svelte'
+  import Alert from '$lib/components/Alert.svelte'
+  import PasswordInput from '$lib/components/PasswordInput.svelte'
 
   let { form, data }: { form: ActionData; data: PageData } = $props()
 
@@ -16,7 +17,6 @@
   let email = $state('')
   let employeeCode = $state('')
   let password = $state('')
-  let showPassword = $state(false)
   let isLoading = $state(false)
 
   $effect(() => {
@@ -28,7 +28,6 @@
     }
   })
 
-  // ─── Password validation ───────────────────────────────────────────────────
   const pwResult = $derived(password ? validatePassword(password) : null)
 </script>
 
@@ -40,34 +39,23 @@
   <div class="max-w-2xl mx-auto space-y-4">
 
         <!-- Info: department is auto-assigned -->
-        <div role="alert" class="alert alert-info">
-          <Info class="size-5 shrink-0" />
-          <span class="text-sm">พนักงานที่เพิ่มจะถูกจัดอยู่ในแผนกของคุณโดยอัตโนมัติ และได้รับสิทธิ์เป็น <strong>Employee</strong></span>
-        </div>
+        <Alert type="info">พนักงานที่เพิ่มจะถูกจัดอยู่ในแผนกของคุณโดยอัตโนมัติ และได้รับสิทธิ์เป็น <strong>Employee</strong></Alert>
 
-        <!-- Success alert -->
         {#if form?.success}
-          <div role="alert" class="alert alert-success">
-            <CircleCheck class="size-5 shrink-0" />
-            <span class="text-sm">เพิ่มพนักงานเรียบร้อยแล้ว</span>
-          </div>
+          <Alert type="success">เพิ่มพนักงานเรียบร้อยแล้ว</Alert>
         {/if}
 
-        <!-- Error alert -->
         {#if form?.error}
-          <div role="alert" class="alert alert-error">
-            <CircleAlert class="size-5 shrink-0" />
-            <div class="text-sm">
-              <p>{form.error}</p>
-              {#if form.details}
-                <ul class="list-disc list-inside mt-1">
-                  {#each form.details as detail}
-                    <li>{detail}</li>
-                  {/each}
-                </ul>
-              {/if}
-            </div>
-          </div>
+          <Alert type="error">
+            <p>{form.error}</p>
+            {#if form.details}
+              <ul class="list-disc list-inside mt-1">
+                {#each form.details as detail}
+                  <li>{detail}</li>
+                {/each}
+              </ul>
+            {/if}
+          </Alert>
         {/if}
 
         <!-- Form -->
@@ -169,50 +157,7 @@
               </div>
 
               <!-- รหัสผ่าน -->
-              <fieldset class="fieldset">
-                <legend class="fieldset-legend">รหัสผ่าน <span class="text-error">*</span></legend>
-                <label class="input input-bordered w-full">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    bind:value={password}
-                    placeholder="••••••••"
-                    autocomplete="new-password"
-                    required
-                    disabled={isLoading}
-                  />
-                  <button
-                    type="button"
-                    class="btn btn-ghost btn-xs px-1"
-                    onclick={() => (showPassword = !showPassword)}
-                    aria-label={showPassword ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'}
-                  >
-                    {#if showPassword}
-                      <EyeOff class="size-4 opacity-60" />
-                    {:else}
-                      <Eye class="size-4 opacity-60" />
-                    {/if}
-                  </button>
-                </label>
-
-                <!-- Password policy feedback -->
-                {#if pwResult}
-                  <ul class="mt-2 space-y-1">
-                    {#each pwResult.errors as err}
-                      <li class="fieldset-label text-error flex items-center gap-1">
-                        <CircleAlert class="size-3 shrink-0" />
-                        {err}
-                      </li>
-                    {/each}
-                    {#if pwResult.valid}
-                      <li class="fieldset-label text-success flex items-center gap-1">
-                        <CircleCheck class="size-3 shrink-0" />
-                        รหัสผ่านผ่านนโยบายความปลอดภัย
-                      </li>
-                    {/if}
-                  </ul>
-                {/if}
-              </fieldset>
+              <PasswordInput bind:value={password} disabled={isLoading} />
 
               <!-- Actions -->
               <div class="flex justify-end gap-2 pt-2">

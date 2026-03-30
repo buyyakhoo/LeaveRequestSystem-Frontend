@@ -2,16 +2,11 @@
   import { LogOut, UserRound, LayoutDashboard, ScrollText, UserPlus, CalendarOff, ShieldPlus, Clock } from 'lucide-svelte'
   import { page } from '$app/state'
   import type { AuthUser } from '$lib/auth'
+  import { roleLabel } from '$lib/utils'
 
   let { user, onClose }: { user: AuthUser; onClose?: () => void } = $props()
 
   const currentPath = $derived(page.url.pathname)
-
-  const roleLabel: Record<string, string> = {
-    admin: 'Administrator',
-    manager: 'Manager',
-    user: 'Employee',
-  }
 </script>
 
 <aside class="w-64 h-full bg-base-100 border-r border-base-200 flex flex-col">

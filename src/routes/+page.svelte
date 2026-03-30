@@ -3,6 +3,9 @@
   import type { PageData } from './$types'
   import type { Employee, LeaveRequest, LeaveSummary, EventLogEntry } from './+page.server'
   import AppLayout from '$lib/components/AppLayout.svelte'
+  import StatCard from '$lib/components/StatCard.svelte'
+  import LeaveStatusBadge from '$lib/components/LeaveStatusBadge.svelte'
+  import { leaveTypeLabel, formatDate, calcDays, actionLabel } from '$lib/utils'
 
   let { data }: { data: PageData } = $props()
 
@@ -48,25 +51,6 @@
     }).length
   })())
 
-  const leaveTypeLabel: Record<string, string> = {
-    sick:      'ลาป่วย',
-    vacation:  'ลาพักร้อน',
-    personal:  'ลากิจ',
-    maternity: 'ลาคลอด',
-    ordain:    'ลาอุปสมบท',
-    other:     'อื่นๆ',
-  }
-
-  function formatDate(d: string) {
-    return new Date(d).toLocaleDateString('th-TH', {
-      day: 'numeric', month: 'short', year: '2-digit',
-    })
-  }
-
-  function calcDays(start: string, end: string) {
-    const diff = new Date(end).getTime() - new Date(start).getTime()
-    return Math.round(diff / (1000 * 60 * 60 * 24)) + 1
-  }
 </script>
 
 <svelte:head>
@@ -88,34 +72,10 @@
 
       <!-- ─── Admin: stat cards ────────────────────────────────────────────── -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="card bg-base-100 shadow-sm">
-          <div class="card-body py-4 gap-1">
-            <p class="text-xs text-base-content/50 uppercase tracking-wide">ผู้ใช้งานทั้งหมด</p>
-            <p class="text-3xl font-bold">{adminStats.total}</p>
-            <p class="text-xs text-base-content/50">{adminStats.newThisMonth} รายการเพิ่มเดือนนี้</p>
-          </div>
-        </div>
-        <div class="card bg-base-100 shadow-sm">
-          <div class="card-body py-4 gap-1">
-            <p class="text-xs text-base-content/50 uppercase tracking-wide">HR Officers</p>
-            <p class="text-3xl font-bold text-primary">{adminStats.managers}</p>
-            <p class="text-xs text-base-content/50">Active</p>
-          </div>
-        </div>
-        <div class="card bg-base-100 shadow-sm">
-          <div class="card-body py-4 gap-1">
-            <p class="text-xs text-base-content/50 uppercase tracking-wide">Disabled Users</p>
-            <p class="text-3xl font-bold text-error">{adminStats.disabled}</p>
-            <p class="text-xs text-base-content/50">ลาออกแล้ว</p>
-          </div>
-        </div>
-        <div class="card bg-base-100 shadow-sm">
-          <div class="card-body py-4 gap-1">
-            <p class="text-xs text-base-content/50 uppercase tracking-wide">Event Log วันนี้</p>
-            <p class="text-3xl font-bold">{adminStats.logsToday}</p>
-            <p class="text-xs text-base-content/50">entries</p>
-          </div>
-        </div>
+        <StatCard label="ผู้ใช้งานทั้งหมด" value={adminStats.total} subtitle="{adminStats.newThisMonth} รายการเพิ่มเดือนนี้" />
+        <StatCard label="HR Officers" value={adminStats.managers} subtitle="Active" valueClass="text-primary" />
+        <StatCard label="Disabled Users" value={adminStats.disabled} subtitle="ลาออกแล้ว" valueClass="text-error" />
+        <StatCard label="Event Log วันนี้" value={adminStats.logsToday} subtitle="entries" />
       </div>
 
       <!-- ─── Admin: two-column tables ─────────────────────────────────────── -->
@@ -192,16 +152,7 @@
                             <span class="badge badge-sm badge-ghost">User</span>
                           {/if}
                         </td>
-                        <td class="text-sm">
-                          {leaveTypeLabel[log.action] ?? ({
-                            ADD_USER: 'เพิ่มพนักงาน',
-                            LEAVE_REQUEST: 'แจ้งลา',
-                            LEAVE_APPROVE: 'อนุมัติการลา',
-                            LEAVE_REJECT: 'ปฏิเสธการลา',
-                            DISABLE_USER: 'ปิดบัญชี',
-                            UPDATE_PROFILE: 'แก้ไขโปรไฟล์',
-                          } as Record<string,string>)[log.action] ?? log.action}
-                        </td>
+                        <td class="text-sm">{actionLabel[log.action] ?? log.action}</td>
                       </tr>
                     {/each}
                   </tbody>
@@ -217,20 +168,8 @@
 
       <!-- ─── User: summary cards ──────────────────────────────────────────── -->
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <div class="card bg-base-100 shadow-sm">
-          <div class="card-body py-4 gap-1">
-            <p class="text-xs text-base-content/50 uppercase tracking-wide">รออนุมัติ</p>
-            <p class="text-3xl font-bold text-warning">{summary.pending_count}</p>
-            <p class="text-xs text-base-content/50">คำร้อง</p>
-          </div>
-        </div>
-        <div class="card bg-base-100 shadow-sm">
-          <div class="card-body py-4 gap-1">
-            <p class="text-xs text-base-content/50 uppercase tracking-wide">ลาแล้วปีนี้</p>
-            <p class="text-3xl font-bold text-primary">{summary.total_days_this_year}</p>
-            <p class="text-xs text-base-content/50">วัน (approved)</p>
-          </div>
-        </div>
+        <StatCard label="รออนุมัติ" value={summary.pending_count} subtitle="คำร้อง" valueClass="text-warning" />
+        <StatCard label="ลาแล้วปีนี้" value={summary.total_days_this_year} subtitle="วัน (approved)" valueClass="text-primary" />
         <div class="card bg-base-100 shadow-sm col-span-2 sm:col-span-1">
           <div class="card-body py-4 gap-2">
             <p class="text-xs text-base-content/50 uppercase tracking-wide">แยกตามประเภท</p>
@@ -284,15 +223,7 @@
                       <td class="text-center text-sm font-medium">
                         {calcDays(leave.start_date, leave.end_date)}
                       </td>
-                      <td>
-                        {#if leave.status === 'approved'}
-                          <span class="badge badge-success badge-sm">อนุมัติ</span>
-                        {:else if leave.status === 'rejected'}
-                          <span class="badge badge-error badge-sm">ไม่อนุมัติ</span>
-                        {:else}
-                          <span class="badge badge-warning badge-sm">รออนุมัติ</span>
-                        {/if}
-                      </td>
+                      <td><LeaveStatusBadge status={leave.status} /></td>
                     </tr>
                   {/each}
                 </tbody>
@@ -313,39 +244,15 @@
 
       <!-- ─── Manager: stat cards ─────────────────────────────────────────── -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="card bg-base-100 shadow-sm">
-          <div class="card-body py-4 gap-1">
-            <p class="text-xs text-base-content/50 uppercase tracking-wide">พนักงานในระบบ</p>
-            <p class="text-3xl font-bold">{activeEmployeeCount}</p>
-            <p class="text-xs text-base-content/50">Active</p>
-          </div>
-        </div>
-        <div class="card bg-base-100 shadow-sm">
-          <div class="card-body py-4 gap-1">
-            <p class="text-xs text-base-content/50 uppercase tracking-wide">รออนุมัติ</p>
-            <p class="text-3xl font-bold text-warning">{pendingLeaves.length}</p>
-            <p class="text-xs text-base-content/50">คำร้อง</p>
-          </div>
-        </div>
-        <div class="card bg-base-100 shadow-sm">
-          <div class="card-body py-4 gap-1">
-            <p class="text-xs text-base-content/50 uppercase tracking-wide">ลาวันนี้</p>
-            <p class="text-3xl font-bold text-error">{onLeaveTodayCount}</p>
-            <p class="text-xs text-base-content/50">พนักงาน</p>
-          </div>
-        </div>
-        <div class="card bg-base-100 shadow-sm">
-          <div class="card-body py-4 gap-1">
-            <p class="text-xs text-base-content/50 uppercase tracking-wide">อนุมัติเดือนนี้</p>
-            <p class="text-3xl font-bold text-primary">{allLeaves.filter(l => {
-              if (l.status !== 'approved') return false
-              const d = new Date(l.start_date)
-              const now = new Date()
-              return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
-            }).length}</p>
-            <p class="text-xs text-base-content/50">คำร้อง</p>
-          </div>
-        </div>
+        <StatCard label="พนักงานในระบบ" value={activeEmployeeCount} subtitle="Active" />
+        <StatCard label="รออนุมัติ" value={pendingLeaves.length} subtitle="คำร้อง" valueClass="text-warning" />
+        <StatCard label="ลาวันนี้" value={onLeaveTodayCount} subtitle="พนักงาน" valueClass="text-error" />
+        <StatCard label="อนุมัติเดือนนี้" value={allLeaves.filter(l => {
+          if (l.status !== 'approved') return false
+          const d = new Date(l.start_date)
+          const now = new Date()
+          return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
+        }).length} subtitle="คำร้อง" valueClass="text-primary" />
       </div>
 
       <!-- ─── Manager: employee list + pending requests ──────────────────── -->

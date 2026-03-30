@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types'
   import AppLayout from '$lib/components/AppLayout.svelte'
+  import { roleLabel } from '$lib/utils'
 
   let { data }: { data: PageData } = $props()
 
@@ -8,12 +9,6 @@
   const expiresAt = $derived(
     data.tokenExp ? new Date(data.tokenExp * 1000).toLocaleString() : '—'
   )
-
-  const roleLabel: Record<string, string> = {
-    admin: 'Administrator',
-    manager: 'Manager',
-    user: 'Employee',
-  }
 </script>
 
 <svelte:head>

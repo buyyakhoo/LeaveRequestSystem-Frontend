@@ -1,6 +1,5 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
-import { AUTH_COOKIE } from '$lib/auth'
 import { API_BASE } from '$env/static/private'
 
 export interface EventLog {
@@ -18,14 +17,13 @@ export interface EventLog {
   target_email?: string | null
 }
 
-export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
+export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (!locals.user) redirect(302, '/auth')
   if (locals.user.role !== 'manager' && locals.user.role !== 'admin') {
     redirect(302, '/')
   }
 
-  const token = cookies.get(AUTH_COOKIE)
-  const headers = { Authorization: `Bearer ${token}` }
+  const headers = { Authorization: `Bearer ${locals.token}` }
 
   const [logsRes, leavesRes] = await Promise.all([
     fetch(`${API_BASE}/event-logs?limit=100`, { headers }),

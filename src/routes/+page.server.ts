@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
-import { AUTH_COOKIE, USER_COOKIE } from '$lib/auth'
+import { AUTH_COOKIE } from '$lib/auth'
 import { API_BASE } from '$env/static/private'
 
 export interface Employee {
@@ -42,7 +42,7 @@ export interface LeaveSummary {
   by_type: Record<string, number>
 }
 
-export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
+export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (!locals.user) redirect(302, '/auth')
 
   const base = {
@@ -50,8 +50,7 @@ export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
     tokenExp: locals.tokenExp,
   }
 
-  const token = cookies.get(AUTH_COOKIE)
-  const headers = { Authorization: `Bearer ${token}` }
+  const headers = { Authorization: `Bearer ${locals.token}` }
 
   if (locals.user.role === 'user') {
     const [summaryRes, leavesRes] = await Promise.all([
@@ -114,27 +113,24 @@ export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
 export const actions: Actions = {
   logout: async ({ cookies }) => {
     cookies.delete(AUTH_COOKIE, { path: '/' })
-    cookies.delete(USER_COOKIE, { path: '/' })
     redirect(302, '/auth')
   },
 
-  approve: async ({ request, cookies, fetch }) => {
-    const token = cookies.get(AUTH_COOKIE)
+  approve: async ({ request, locals, fetch }) => {
     const fd = await request.formData()
     const id = fd.get('id') as string
     await fetch(`${API_BASE}/leaves/${id}/approve`, {
       method: 'PATCH',
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${locals.token}` },
     })
   },
 
-  reject: async ({ request, cookies, fetch }) => {
-    const token = cookies.get(AUTH_COOKIE)
+  reject: async ({ request, locals, fetch }) => {
     const fd = await request.formData()
     const id = fd.get('id') as string
     await fetch(`${API_BASE}/leaves/${id}/reject`, {
       method: 'PATCH',
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${locals.token}` },
     })
   },
 }

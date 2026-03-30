@@ -1,8 +1,8 @@
 <script lang="ts">
   import { enhance, applyAction } from '$app/forms'
   import type { ActionData, PageData } from './$types'
-  import { CircleAlert, CircleCheck } from 'lucide-svelte'
   import AppLayout from '$lib/components/AppLayout.svelte'
+  import Alert from '$lib/components/Alert.svelte'
 
   let { form, data }: { form: ActionData; data: PageData } = $props()
 
@@ -50,20 +50,12 @@
 <AppLayout {user} title="ยื่นคำร้องขอลา">
   <div class="max-w-2xl mx-auto space-y-4">
 
-    <!-- Success alert -->
     {#if showSuccess}
-      <div role="alert" class="alert alert-success">
-        <CircleCheck class="size-5 shrink-0" />
-        <span class="text-sm">ยื่นคำร้องขอลาเรียบร้อยแล้ว รอการอนุมัติ</span>
-      </div>
+      <Alert type="success">ยื่นคำร้องขอลาเรียบร้อยแล้ว รอการอนุมัติ</Alert>
     {/if}
 
-    <!-- Error alert -->
     {#if form && !form.success && form.error}
-      <div role="alert" class="alert alert-error">
-        <CircleAlert class="size-5 shrink-0" />
-        <span class="text-sm">{form.error}</span>
-      </div>
+      <Alert type="error">{form.error}</Alert>
     {/if}
 
     <div class="card bg-base-100 shadow-sm">

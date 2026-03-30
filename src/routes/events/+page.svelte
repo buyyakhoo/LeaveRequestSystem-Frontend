@@ -2,20 +2,12 @@
   import type { PageData } from './$types'
   import type { EventLog } from './+page.server'
   import AppLayout from '$lib/components/AppLayout.svelte'
+  import { actionLabel, formatTimestamp } from '$lib/utils'
 
   let { data }: { data: PageData } = $props()
 
   const user = $derived(data.user!)
   const logs = $derived(data.logs as EventLog[])
-
-  const actionLabel: Record<string, string> = {
-    ADD_USER:       'เพิ่มพนักงาน',
-    DISABLE_USER:   'ปิดบัญชีพนักงาน',
-    UPDATE_PROFILE: 'แก้ไขโปรไฟล์',
-    LEAVE_REQUEST:  'แจ้งลา',
-    LEAVE_APPROVE:  'อนุมัติการลา',
-    LEAVE_REJECT:   'ปฏิเสธการลา',
-  }
 
   // ─── Filter state ──────────────────────────────────────────────────────────
   let filterAction = $state('')
@@ -32,13 +24,6 @@
     }
     return true
   }))
-
-  function formatTimestamp(ts: string) {
-    const d = new Date(ts)
-    return d.toLocaleDateString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit' })
-      + '\n'
-      + d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-  }
 
   function getTarget(log: EventLog): string {
     if (log.target_email) return log.target_email

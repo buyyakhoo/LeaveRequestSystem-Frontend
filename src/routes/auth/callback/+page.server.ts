@@ -1,25 +1,28 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
-import { decodeToken, isTokenValid, AUTH_COOKIE, USER_COOKIE } from '$lib/auth'
-import { getMeApi } from '$lib/server/api'
+import { decodeToken, AUTH_COOKIE } from '$lib/auth'
+import { exchangeCodeApi } from '$lib/server/api'
 
 export const load: PageServerLoad = async ({ url, cookies, fetch }) => {
-  const token = url.searchParams.get('token')
+  const code = url.searchParams.get('code')
 
-  if (!token || !isTokenValid(token)) {
+  if (!code) {
     redirect(302, '/auth?error=invalid_token')
   }
 
-  const payload = decodeToken(token!)!
-  const maxAge = payload.exp - Math.floor(Date.now() / 1000)
+  let token: string
 
-  let user
   try {
-    user = await getMeApi(token!, fetch)
-  } catch (err) {
-    console.error('[/auth/callback] getMeApi failed:', err)
+    const result = await exchangeCodeApi(code, fetch)
+    token = result.token
+  } catch {
     redirect(302, '/auth?error=server_error')
   }
+
+  const payload = decodeToken(token!)
+  if (!payload) redirect(302, '/auth?error=invalid_token')
+
+  const maxAge = payload.exp - Math.floor(Date.now() / 1000)
 
   const cookieOpts = {
     httpOnly: true,
@@ -30,9 +33,6 @@ export const load: PageServerLoad = async ({ url, cookies, fetch }) => {
   }
 
   cookies.set(AUTH_COOKIE, token!, cookieOpts)
-  cookies.set(USER_COOKIE, Buffer.from(JSON.stringify(user)).toString('base64'), cookieOpts)
 
-  // Don't redirect here — let the page render first so cookies are included
-  // in the page response. Client-side goto('/') then navigates as same-origin.
   return {}
 }

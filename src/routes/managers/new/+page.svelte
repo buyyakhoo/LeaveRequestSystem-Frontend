@@ -1,9 +1,10 @@
 <script lang="ts">
   import { enhance, applyAction } from '$app/forms'
   import type { ActionData, PageData } from './$types'
-  import { Eye, EyeOff, CircleAlert, CircleCheck, Info } from 'lucide-svelte'
   import { validatePassword } from '$lib/auth'
   import AppLayout from '$lib/components/AppLayout.svelte'
+  import Alert from '$lib/components/Alert.svelte'
+  import PasswordInput from '$lib/components/PasswordInput.svelte'
 
   let { form, data }: { form: ActionData; data: PageData } = $props()
 
@@ -16,7 +17,6 @@
   let employeeCode = $state('')
   let departmentId = $state('')
   let password = $state('')
-  let showPassword = $state(false)
   let isLoading = $state(false)
 
   $effect(() => {
@@ -44,23 +44,14 @@
 <AppLayout {user} title="เพิ่ม Manager">
   <div class="max-w-2xl mx-auto space-y-4">
 
-    <div role="alert" class="alert alert-info">
-      <Info class="size-5 shrink-0" />
-      <span class="text-sm">Manager ที่เพิ่มจะได้รับสิทธิ์ดูแลแผนกที่เลือก และสามารถอนุมัติการลาของพนักงานในแผนกนั้น</span>
-    </div>
+    <Alert type="info">Manager ที่เพิ่มจะได้รับสิทธิ์ดูแลแผนกที่เลือก และสามารถอนุมัติการลาของพนักงานในแผนกนั้น</Alert>
 
     {#if form?.success}
-      <div role="alert" class="alert alert-success">
-        <CircleCheck class="size-5 shrink-0" />
-        <span class="text-sm">เพิ่ม Manager เรียบร้อยแล้ว</span>
-      </div>
+      <Alert type="success">เพิ่ม Manager เรียบร้อยแล้ว</Alert>
     {/if}
 
     {#if form && !form.success && form.error}
-      <div role="alert" class="alert alert-error">
-        <CircleAlert class="size-5 shrink-0" />
-        <span class="text-sm">{form.error}</span>
-      </div>
+      <Alert type="error">{form.error}</Alert>
     {/if}
 
     <div class="card bg-base-100 shadow-sm">
@@ -167,49 +158,7 @@
           </div>
 
           <!-- รหัสผ่าน -->
-          <fieldset class="fieldset">
-            <legend class="fieldset-legend">รหัสผ่าน <span class="text-error">*</span></legend>
-            <label class="input input-bordered w-full">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                bind:value={password}
-                placeholder="••••••••"
-                autocomplete="new-password"
-                required
-                disabled={isLoading}
-              />
-              <button
-                type="button"
-                class="btn btn-ghost btn-xs px-1"
-                onclick={() => (showPassword = !showPassword)}
-                aria-label={showPassword ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'}
-              >
-                {#if showPassword}
-                  <EyeOff class="size-4 opacity-60" />
-                {:else}
-                  <Eye class="size-4 opacity-60" />
-                {/if}
-              </button>
-            </label>
-
-            {#if pwResult}
-              <ul class="mt-2 space-y-1">
-                {#each pwResult.errors as err}
-                  <li class="fieldset-label text-error flex items-center gap-1">
-                    <CircleAlert class="size-3 shrink-0" />
-                    {err}
-                  </li>
-                {/each}
-                {#if pwResult.valid}
-                  <li class="fieldset-label text-success flex items-center gap-1">
-                    <CircleCheck class="size-3 shrink-0" />
-                    รหัสผ่านผ่านนโยบายความปลอดภัย
-                  </li>
-                {/if}
-              </ul>
-            {/if}
-          </fieldset>
+          <PasswordInput bind:value={password} disabled={isLoading} />
 
           <!-- Actions -->
           <div class="flex justify-end gap-2 pt-2">

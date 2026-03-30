@@ -40,7 +40,7 @@ export function validatePassword(password: string): PasswordValidationResult {
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface AuthUser {
   id: number
-  employee_code: string
+  employee_code: string | null
   email: string
   first_name: string
   last_name: string
@@ -58,6 +58,11 @@ export interface JwtPayload {
   sub: number
   email: string
   role: string
+  first_name: string
+  last_name: string
+  employee_code: string | null
+  department_id: number | null
+  department_name: string | null
   exp: number
 }
 
@@ -66,7 +71,8 @@ export function decodeToken(token: string): JwtPayload | null {
     const base64Url = token.split('.')[1]
     if (!base64Url) return null
     const base64 = base64Url.replaceAll('-', '+').replaceAll('_', '/')
-    return JSON.parse(atob(base64)) as JwtPayload
+    const bytes = Uint8Array.from(atob(base64), c => c.codePointAt(0)!)
+    return JSON.parse(new TextDecoder().decode(bytes)) as JwtPayload
   } catch {
     return null
   }

@@ -6,6 +6,7 @@ declare global {
 		interface Locals {
 			user: import('$lib/auth').AuthUser | null
 			tokenExp: number | null
+			token: string | null
 		}
 		// interface PageData {}
 		// interface PageState {}

@@ -1,6 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
-import { AUTH_COOKIE } from '$lib/auth'
 import { API_BASE } from '$env/static/private'
 
 interface Department {
@@ -21,8 +20,7 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 }
 
 export const actions: Actions = {
-  default: async ({ request, cookies, fetch }) => {
-    const token = cookies.get(AUTH_COOKIE)
+  default: async ({ request, locals, fetch }) => {
     const fd = await request.formData()
 
     const firstName = fd.get('firstName') as string
@@ -54,7 +52,7 @@ export const actions: Actions = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${locals.token}`,
       },
       body: JSON.stringify(body),
     })

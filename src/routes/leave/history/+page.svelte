@@ -2,31 +2,13 @@
   import type { PageData } from './$types'
   import type { LeaveRequest } from '../../+page.server'
   import AppLayout from '$lib/components/AppLayout.svelte'
+  import LeaveStatusBadge from '$lib/components/LeaveStatusBadge.svelte'
+  import { leaveTypeLabel, formatDate, calcDays } from '$lib/utils'
 
   let { data }: { data: PageData } = $props()
 
   const user = $derived(data.user!)
   const leaves = $derived(data.leaves as LeaveRequest[])
-
-  const leaveTypeLabel: Record<string, string> = {
-    sick:      'ลาป่วย',
-    vacation:  'ลาพักร้อน',
-    personal:  'ลากิจ',
-    maternity: 'ลาคลอด',
-    ordain:    'ลาอุปสมบท',
-    other:     'อื่นๆ',
-  }
-
-  function formatDate(d: string) {
-    return new Date(d).toLocaleDateString('th-TH', {
-      day: 'numeric', month: 'short', year: '2-digit',
-    })
-  }
-
-  function calcDays(start: string, end: string) {
-    const diff = new Date(end).getTime() - new Date(start).getTime()
-    return Math.round(diff / (1000 * 60 * 60 * 24)) + 1
-  }
 </script>
 
 <svelte:head>
@@ -66,15 +48,7 @@
                 <td class="text-sm text-base-content/70 whitespace-nowrap">{formatDate(leave.end_date)}</td>
                 <td class="text-center text-sm font-medium">{calcDays(leave.start_date, leave.end_date)}</td>
                 <td class="text-sm text-base-content/70 max-w-xs truncate">{leave.reason}</td>
-                <td>
-                  {#if leave.status === 'approved'}
-                    <span class="badge badge-success badge-sm">อนุมัติ</span>
-                  {:else if leave.status === 'rejected'}
-                    <span class="badge badge-error badge-sm">ไม่อนุมัติ</span>
-                  {:else}
-                    <span class="badge badge-warning badge-sm">รออนุมัติ</span>
-                  {/if}
-                </td>
+                <td><LeaveStatusBadge status={leave.status} /></td>
               </tr>
             {/each}
           </tbody>

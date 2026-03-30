@@ -1,20 +1,17 @@
 import { redirect, fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
-import { AUTH_COOKIE } from '$lib/auth'
 import { API_BASE } from '$env/static/private'
 
-export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
+export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (!locals.user) redirect(302, '/auth')
   if (locals.user.role !== 'manager' && locals.user.role !== 'admin') {
     redirect(302, '/')
   }
 
-  // Fetch fresh profile to get department info (cookie may not have it yet)
-  const token = cookies.get(AUTH_COOKIE)
   let department: { id: number; name: string } | null = null
   try {
     const res = await fetch(`${API_BASE}/auth/me`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${locals.token}` },
     })
     if (res.ok) {
       const profile = await res.json() as { departments?: { id: number; name: string } | null }
@@ -26,8 +23,7 @@ export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
 }
 
 export const actions: Actions = {
-  default: async ({ request, cookies, fetch }) => {
-    const token = cookies.get(AUTH_COOKIE)
+  default: async ({ request, locals, fetch }) => {
     const form = await request.formData()
 
     const firstName = (form.get('firstName') as string)?.trim()
@@ -44,7 +40,7 @@ export const actions: Actions = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${locals.token}`,
       },
       body: JSON.stringify({ firstName, lastName, email, password, employeeCode }),
     })

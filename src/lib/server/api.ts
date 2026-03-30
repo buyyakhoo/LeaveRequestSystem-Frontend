@@ -12,6 +12,19 @@ export async function getMeApi(
   return res.json() as Promise<AuthUser>
 }
 
+export async function exchangeCodeApi(
+  code: string,
+  fetchFn: typeof fetch = fetch,
+): Promise<LoginResponse> {
+  const res = await fetchFn(`${API_BASE}/auth/exchange`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code }),
+  })
+  if (!res.ok) throw new Error('Exchange failed or code expired')
+  return res.json() as Promise<LoginResponse>
+}
+
 export async function loginApi(
   email: string,
   password: string,

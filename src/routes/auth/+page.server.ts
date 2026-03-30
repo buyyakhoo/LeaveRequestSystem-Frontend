@@ -1,6 +1,6 @@
 import { redirect, fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
-import { decodeToken, AUTH_COOKIE, USER_COOKIE } from '$lib/auth'
+import { decodeToken, AUTH_COOKIE } from '$lib/auth'
 import { loginApi } from '$lib/server/api'
 
 const oauthErrorMessages: Record<string, string> = {
@@ -29,12 +29,10 @@ export const actions: Actions = {
     const password = data.get('password') as string
 
     let token: string
-    let user: Awaited<ReturnType<typeof loginApi>>['user']
 
     try {
       const result = await loginApi(email, password, fetch)
       token = result.token
-      user = result.user
     } catch (err) {
       return fail(400, {
         error: err instanceof Error ? err.message : 'Login failed',
@@ -55,7 +53,6 @@ export const actions: Actions = {
     }
 
     cookies.set(AUTH_COOKIE, token, cookieOpts)
-    cookies.set(USER_COOKIE, Buffer.from(JSON.stringify(user)).toString('base64'), cookieOpts)
 
     redirect(302, '/')
   },
