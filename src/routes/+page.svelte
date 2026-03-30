@@ -59,15 +59,6 @@
 
 <AppLayout {user} title="Dashboard">
   <div class="space-y-6">
-
-    <!-- ─── Welcome card ──────────────────────────────────────────────────── -->
-    <div class="card bg-base-100 shadow-sm">
-      <div class="card-body py-4">
-        <h2 class="text-lg font-semibold">Welcome back, {user.first_name}!</h2>
-        <p class="text-base-content/60 text-sm">You are signed in to the Leave Request System.</p>
-      </div>
-    </div>
-
     {#if user.role === 'admin'}
 
       <!-- ─── Admin: stat cards ────────────────────────────────────────────── -->
@@ -262,7 +253,7 @@
           <div class="card-body gap-4">
             <div class="flex items-center justify-between">
               <h3 class="font-semibold text-base">รายชื่อพนักงาน</h3>
-              <span class="text-sm text-base-content/50">{employees.length} คน</span>
+              <a href="/employees" class="text-xs text-primary hover:underline">{employees.length} คน · ดูทั้งหมด</a>
             </div>
             {#if employees.length === 0}
               <p class="text-base-content/50 text-sm py-6 text-center">ไม่มีพนักงานในแผนก</p>
@@ -274,12 +265,18 @@
                       <th>ชื่อ</th>
                       <th>แผนก</th>
                       <th>สถานะ</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {#each employees as emp (emp.id)}
+                    {#each employees.slice(0, 8) as emp (emp.id)}
                       <tr class="hover">
-                        <td class="text-sm font-medium">{emp.first_name} {emp.last_name}</td>
+                        <td class="text-sm font-medium">
+                          {emp.first_name} {emp.last_name}
+                          {#if !emp.employee_code}
+                            <span class="badge badge-warning badge-xs ml-1">ไม่มีรหัส</span>
+                          {/if}
+                        </td>
                         <td class="text-sm text-base-content/70">{emp.departments?.name ?? '—'}</td>
                         <td>
                           {#if emp.status === 'active'}
@@ -288,11 +285,21 @@
                             <span class="badge badge-error badge-sm">Disabled</span>
                           {/if}
                         </td>
+                        <td>
+                          <a href="/employees/{emp.id}/edit" class="btn btn-ghost btn-xs">แก้ไข</a>
+                        </td>
                       </tr>
                     {/each}
                   </tbody>
                 </table>
               </div>
+              {#if employees.length > 8}
+                <div class="text-center pt-1">
+                  <a href="/employees" class="btn btn-ghost btn-sm w-full">
+                    ดูพนักงานทั้งหมด {employees.length} คน
+                  </a>
+                </div>
+              {/if}
             {/if}
           </div>
         </div>

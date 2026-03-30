@@ -47,6 +47,8 @@ export const actionLabel: Record<string, string> = {
   ADD_USER:       'เพิ่มพนักงาน',
   DISABLE_USER:   'ปิดบัญชีพนักงาน',
   UPDATE_PROFILE: 'แก้ไขโปรไฟล์',
+  PROMOTE_USER:   'เลื่อนยศเป็น Manager',
+  DEMOTE_USER:    'ลดระดับเป็น User',
   LEAVE_REQUEST:  'แจ้งลา',
   LEAVE_APPROVE:  'อนุมัติการลา',
   LEAVE_REJECT:   'ปฏิเสธการลา',

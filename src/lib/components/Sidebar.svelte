@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { LogOut, UserRound, LayoutDashboard, ScrollText, UserPlus, CalendarOff, ShieldPlus, Clock } from 'lucide-svelte'
+  import { LogOut, UserRound, LayoutDashboard, ScrollText, UserPlus, CalendarOff, ShieldPlus, Clock, TrendingUp, TrendingDown, UserX } from 'lucide-svelte'
   import { page } from '$app/state'
   import type { AuthUser } from '$lib/auth'
   import { roleLabel } from '$lib/utils'
@@ -35,6 +35,24 @@
           </a>
         </li>
         <li>
+          <a href="/promote" class={currentPath === '/promote' ? 'active' : ''} onclick={onClose}>
+            <TrendingUp class="size-4" />
+            เลื่อนยศเป็น Manager
+          </a>
+        </li>
+        <li>
+          <a href="/demote" class={currentPath === '/demote' ? 'active' : ''} onclick={onClose}>
+            <TrendingDown class="size-4" />
+            ลดระดับ Manager
+          </a>
+        </li>
+        <li>
+          <a href="/resign" class={currentPath === '/resign' ? 'active' : ''} onclick={onClose}>
+            <UserX class="size-4" />
+            บันทึกการลาออก
+          </a>
+        </li>
+        <li>
           <a href="/managers/new" class={currentPath === '/managers/new' ? 'active' : ''} onclick={onClose}>
             <ShieldPlus class="size-4" />
             เพิ่ม Manager
@@ -49,15 +67,33 @@
           </a>
         </li>
         <li>
-          <a href="/events" class={currentPath === '/events' ? 'active' : ''} onclick={onClose}>
-            <ScrollText class="size-4" />
-            Event Log
+          <a href="/leave/all" class={currentPath === '/leave/all' ? 'active' : ''} onclick={onClose}>
+            <CalendarOff class="size-4" />
+            ประวัติการลา
+          </a>
+        </li>
+        <li>
+          <a href="/employees" class={currentPath === '/employees' ? 'active' : ''} onclick={onClose}>
+            <UserRound class="size-4" />
+            พนักงานทั้งหมด
           </a>
         </li>
         <li>
           <a href="/employees/new" class={currentPath === '/employees/new' ? 'active' : ''} onclick={onClose}>
             <UserPlus class="size-4" />
             เพิ่มพนักงาน
+          </a>
+        </li>
+        <li>
+          <a href="/resign" class={currentPath === '/resign' ? 'active' : ''} onclick={onClose}>
+            <UserX class="size-4" />
+            บันทึกการลาออก
+          </a>
+        </li>
+        <li>
+          <a href="/events" class={currentPath === '/events' ? 'active' : ''} onclick={onClose}>
+            <ScrollText class="size-4" />
+            Event Log
           </a>
         </li>
 
