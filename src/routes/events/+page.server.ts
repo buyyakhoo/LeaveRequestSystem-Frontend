@@ -53,11 +53,12 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 
   // Enrich logs: for leave actions, resolve email from detail or leaveEmailMap
   logs = logs.map(log => {
-    if (log.target_type !== 'leave_request') return log
-    const email =
-      (log.detail?.email as string | undefined) ??
-      (log.target_id ? leaveEmailMap.get(log.target_id) : null) ??
-      null
+    let email = (log.detail?.email as string | undefined) ?? null
+
+    if (!email && log.target_type === 'leave_request' && log.target_id) {
+      email = leaveEmailMap.get(log.target_id) ?? null
+    }
+
     return { ...log, target_email: email }
   })
 

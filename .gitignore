@@ -7,6 +7,8 @@ node_modules
 .wrangler
 /.svelte-kit
 /build
+.claudeignore
+litellm_config.yaml
 
 # OS
 .DS_Store

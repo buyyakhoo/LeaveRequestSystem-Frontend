@@ -47,12 +47,6 @@
           </a>
         </li>
         <li>
-          <a href="/resign" class={currentPath === '/resign' ? 'active' : ''} onclick={onClose}>
-            <UserX class="size-4" />
-            บันทึกการลาออก
-          </a>
-        </li>
-        <li>
           <a href="/managers/new" class={currentPath === '/managers/new' ? 'active' : ''} onclick={onClose}>
             <ShieldPlus class="size-4" />
             เพิ่ม Manager
