@@ -1,0 +1,21 @@
+services:
+  frontend:
+    build: .
+    image: leaverequestsystem_frontend
+    ports:
+      - "4173:4173"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - API_BASE=${API_BASE}
+      - PORT=4173
+      - ORIGIN=http://localhost:4173
+      - PROTOCOL_HEADER=x-forwarded-proto
+      - HOST_HEADER=x-forwarded-host
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    external: true

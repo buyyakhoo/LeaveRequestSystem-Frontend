@@ -1,6 +1,6 @@
 import type { Handle } from '@sveltejs/kit'
 import { decodeToken, isTokenValid, AUTH_COOKIE } from '$lib/auth'
-import { API_BASE } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 
 export const handle: Handle = async ({ event, resolve }) => {
   const token = event.cookies.get(AUTH_COOKIE) ?? null
@@ -9,7 +9,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     const payload = decodeToken(token)
     if (payload) {
       try {
-        const res = await fetch(`${API_BASE}/auth/me`, {
+        const res = await fetch(`${env.API_BASE}/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         })
 

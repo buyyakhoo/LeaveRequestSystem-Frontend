@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
-import { API_BASE } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 
 interface Department {
   id: number
@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (!locals.user) redirect(302, '/auth')
   if (locals.user.role !== 'admin') redirect(302, '/')
 
-  const res = await fetch(`${API_BASE}/departments`)
+  const res = await fetch(`${env.API_BASE}/departments`)
   const departments: Department[] = res.ok
     ? ((await res.json()) as { data: Department[] }).data
     : []
@@ -48,7 +48,7 @@ export const actions: Actions = {
     }
     if (employeeCode) body.employeeCode = employeeCode
 
-    const res = await fetch(`${API_BASE}/employees`, {
+    const res = await fetch(`${env.API_BASE}/employees`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
-import { API_BASE } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 
 export interface EventLog {
   id: string
@@ -26,8 +26,8 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
   const headers = { Authorization: `Bearer ${locals.token}` }
 
   const [logsRes, leavesRes] = await Promise.all([
-    fetch(`${API_BASE}/event-logs?limit=100`, { headers }),
-    fetch(`${API_BASE}/leaves`, { headers }),
+    fetch(`${env.API_BASE}/event-logs?limit=100`, { headers }),
+    fetch(`${env.API_BASE}/leaves`, { headers }),
   ])
 
   let logs: EventLog[] = []

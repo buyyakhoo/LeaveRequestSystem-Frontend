@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 import { AUTH_COOKIE } from '$lib/auth'
-import { API_BASE } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 
 export interface Employee {
   id: string
@@ -54,8 +54,8 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 
   if (locals.user.role === 'user') {
     const [summaryRes, leavesRes] = await Promise.all([
-      fetch(`${API_BASE}/leaves/summary`, { headers }),
-      fetch(`${API_BASE}/leaves`, { headers }),
+      fetch(`${env.API_BASE}/leaves/summary`, { headers }),
+      fetch(`${env.API_BASE}/leaves`, { headers }),
     ])
     const summary: LeaveSummary = summaryRes.ok
       ? await summaryRes.json()
@@ -69,8 +69,8 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (locals.user.role === 'admin') {
     const todayStr = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
     const [empRes, logsRes] = await Promise.all([
-      fetch(`${API_BASE}/employees`, { headers }),
-      fetch(`${API_BASE}/event-logs?from=${todayStr}&limit=500`, { headers }),
+      fetch(`${env.API_BASE}/employees`, { headers }),
+      fetch(`${env.API_BASE}/event-logs?from=${todayStr}&limit=500`, { headers }),
     ])
     const allEmployees: Employee[] = empRes.ok
       ? ((await empRes.json()) as { data: Employee[] }).data
@@ -84,9 +84,9 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (locals.user.role !== 'manager') return base
 
   const [empRes, pendingRes, allLeavesRes] = await Promise.all([
-    fetch(`${API_BASE}/employees`, { headers }),
-    fetch(`${API_BASE}/leaves?status=pending`, { headers }),
-    fetch(`${API_BASE}/leaves`, { headers }),
+    fetch(`${env.API_BASE}/employees`, { headers }),
+    fetch(`${env.API_BASE}/leaves?status=pending`, { headers }),
+    fetch(`${env.API_BASE}/leaves`, { headers }),
   ])
 
   const employees: Employee[] = empRes.ok
@@ -119,7 +119,7 @@ export const actions: Actions = {
   approve: async ({ request, locals, fetch }) => {
     const fd = await request.formData()
     const id = fd.get('id') as string
-    await fetch(`${API_BASE}/leaves/${id}/approve`, {
+    await fetch(`${env.API_BASE}/leaves/${id}/approve`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${locals.token}` },
     })
@@ -128,7 +128,7 @@ export const actions: Actions = {
   reject: async ({ request, locals, fetch }) => {
     const fd = await request.formData()
     const id = fd.get('id') as string
-    await fetch(`${API_BASE}/leaves/${id}/reject`, {
+    await fetch(`${env.API_BASE}/leaves/${id}/reject`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${locals.token}` },
     })

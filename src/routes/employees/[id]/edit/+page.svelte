@@ -10,9 +10,16 @@
   const emp = $derived(data.employee)
   const departments = $derived(data.departments)
 
-  let employeeCode = $state(form?.employeeCode ?? '')
-  let departmentId = $state(form?.departmentId ?? String(emp.departments?.id ?? ''))
+  let employeeCode = $state('')
+  let departmentId = $state(String(emp.departments?.id ?? ''))
   let isLoading = $state(false)
+  
+  $effect(() => {
+    if (form) {
+      employeeCode = form.employeeCode ?? ''
+      departmentId = form.departmentId ?? String(emp.departments?.id ?? '')
+    }
+  })
 </script>
 
 <svelte:head>

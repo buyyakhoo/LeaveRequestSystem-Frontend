@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
-import { API_BASE } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 
 export const load: PageServerLoad = ({ locals }) => {
   if (!locals.user) redirect(302, '/auth')
@@ -46,7 +46,7 @@ export const actions: Actions = {
     const body: Record<string, string> = { leaveType, startDate, endDate, reason }
     if (delegateName) body.delegateName = delegateName
 
-    const res = await fetch(`${API_BASE}/leaves`, {
+    const res = await fetch(`${env.API_BASE}/leaves`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

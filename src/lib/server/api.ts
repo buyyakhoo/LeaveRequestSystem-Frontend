@@ -1,11 +1,11 @@
-import { API_BASE } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import type { AuthUser, LoginResponse } from '$lib/auth'
 
 export async function getMeApi(
   token: string,
   fetchFn: typeof fetch = fetch,
 ): Promise<AuthUser> {
-  const res = await fetchFn(`${API_BASE}/auth/me`, {
+  const res = await fetchFn(`${env.API_BASE}/auth/me`, {
     headers: { Authorization: `Bearer ${token}` },
   })
   if (!res.ok) throw new Error(`GET /auth/me failed: ${res.status}`)
@@ -16,7 +16,7 @@ export async function exchangeCodeApi(
   code: string,
   fetchFn: typeof fetch = fetch,
 ): Promise<LoginResponse> {
-  const res = await fetchFn(`${API_BASE}/auth/exchange`, {
+  const res = await fetchFn(`${env.API_BASE}/auth/exchange`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code }),
@@ -30,7 +30,7 @@ export async function loginApi(
   password: string,
   fetchFn: typeof fetch = fetch,
 ): Promise<LoginResponse> {
-  const res = await fetchFn(`${API_BASE}/auth/login`, {
+  const res = await fetchFn(`${env.API_BASE}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),

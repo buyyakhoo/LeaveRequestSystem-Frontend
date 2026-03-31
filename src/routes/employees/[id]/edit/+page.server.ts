@@ -1,16 +1,16 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
-import { API_BASE } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 
 export const load: PageServerLoad = async ({ locals, params, fetch }) => {
   if (!locals.user) redirect(302, '/auth')
   if (locals.user.role !== 'manager' && locals.user.role !== 'admin') redirect(302, '/')
 
   const [empRes, deptRes] = await Promise.all([
-    fetch(`${API_BASE}/employees/${params.id}`, {
+    fetch(`${env.API_BASE}/employees/${params.id}`, {
       headers: { Authorization: `Bearer ${locals.token}` },
     }),
-    fetch(`${API_BASE}/departments`),
+    fetch(`${env.API_BASE}/departments`),
   ])
 
   if (empRes.status === 403) redirect(302, '/employees')
@@ -48,7 +48,7 @@ export const actions: Actions = {
       return fail(400, { error: 'ไม่มีข้อมูลที่ต้องการแก้ไข', employeeCode: '', departmentId: '' })
     }
 
-    const res = await fetch(`${API_BASE}/employees/${params.id}/profile`, {
+    const res = await fetch(`${env.API_BASE}/employees/${params.id}/profile`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

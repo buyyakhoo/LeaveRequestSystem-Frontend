@@ -1,8 +1,8 @@
-import { COOKIE_SECRET } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import crypto from 'node:crypto'
 
 // Derive a 256-bit key from COOKIE_SECRET once at startup
-const KEY = crypto.scryptSync(COOKIE_SECRET, 'lrs_cookie_salt_v1', 32)
+const KEY = crypto.scryptSync(env.COOKIE_SECRET, 'lrs_cookie_salt_v1', 32)
 
 /**
  * AES-256-GCM authenticated encryption.

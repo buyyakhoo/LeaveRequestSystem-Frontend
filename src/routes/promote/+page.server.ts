@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
-import { API_BASE } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import type { Employee } from '../+page.server'
 
 export { Employee }
@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (!locals.user) redirect(302, '/auth')
   if (locals.user.role !== 'admin') redirect(302, '/')
 
-  const res = await fetch(`${API_BASE}/employees`, {
+  const res = await fetch(`${env.API_BASE}/employees`, {
     headers: { Authorization: `Bearer ${locals.token}` },
   })
 
@@ -29,7 +29,7 @@ export const actions: Actions = {
     const id = fd.get('id') as string
     if (!id) return fail(400, { error: 'ไม่พบ ID พนักงาน', id: '' })
 
-    const res = await fetch(`${API_BASE}/employees/${id}/promote`, {
+    const res = await fetch(`${env.API_BASE}/employees/${id}/promote`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${locals.token}` },
     })

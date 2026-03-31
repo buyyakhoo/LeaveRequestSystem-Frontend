@@ -1,6 +1,6 @@
 import { redirect, fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
-import { API_BASE } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 
 export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (!locals.user) redirect(302, '/auth')
@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 
   let department: { id: number; name: string } | null = null
   try {
-    const res = await fetch(`${API_BASE}/auth/me`, {
+    const res = await fetch(`${env.API_BASE}/auth/me`, {
       headers: { Authorization: `Bearer ${locals.token}` },
     })
     if (res.ok) {
@@ -36,7 +36,7 @@ export const actions: Actions = {
       return fail(400, { error: 'กรุณากรอกข้อมูลให้ครบถ้วน', details: undefined, firstName, lastName, email, employeeCode })
     }
 
-    const res = await fetch(`${API_BASE}/employees`, {
+    const res = await fetch(`${env.API_BASE}/employees`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
