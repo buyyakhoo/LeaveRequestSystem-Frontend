@@ -5,13 +5,13 @@
   import ManagerDashboard from '$lib/components/dashboards/ManagerDashboard.svelte'
   import UserDashboard from '$lib/components/dashboards/UserDashboard.svelte'
   import type { AuthUser } from '$lib/auth'
-  import type { Employee, LeaveRequest, LeaveSummary, EventLogEntry } from '$lib/types'
+  import type { Employee, LeaveRequest, LeaveSummary, EventLog } from '$lib/types'
 
   let { data }: { data: PageData } = $props()
 
   const user: AuthUser = $derived(data.user!)
   const allEmployees: Employee[] = $derived((data.allEmployees ?? []) as Employee[])
-  const recentLogs: EventLogEntry[] = $derived((data.recentLogs ?? []) as EventLogEntry[])
+  const recentLogs: EventLog[] = $derived((data.recentLogs ?? []) as EventLog[])
   const employees: Employee[] = $derived((data.employees ?? []) as Employee[])
   const pendingLeaves: LeaveRequest[] = $derived((data.pendingLeaves ?? []) as LeaveRequest[])
   const allLeaves: LeaveRequest[] = $derived((data.allLeaves ?? []) as LeaveRequest[])

@@ -1,9 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 import { env } from '$env/dynamic/private'
-import type { Employee } from '../+page.server'
-
-export { Employee }
+import type { Employee } from '$lib/types'
 
 export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (!locals.user) redirect(302, '/auth')

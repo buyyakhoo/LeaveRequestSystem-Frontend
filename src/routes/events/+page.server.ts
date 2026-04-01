@@ -2,20 +2,7 @@ import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 import { env } from '$env/dynamic/private'
 
-export interface EventLog {
-  id: string
-  actor_id: string | null
-  actor_role: string
-  action: string
-  target_id: string | null
-  target_type: string | null
-  detail: Record<string, unknown> | null
-  result: string
-  timestamp: string
-  actor: { email: string } | null
-  // enriched on server
-  target_email?: string | null
-}
+import type { EventLog } from "$lib/types"
 
 export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (!locals.user) redirect(302, '/auth')

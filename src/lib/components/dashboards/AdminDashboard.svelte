@@ -2,12 +2,12 @@
   import StatCard from "$lib/components/StatCard.svelte"
   import { actionLabel } from "$lib/utils"
   import type { AuthUser } from "$lib/auth"
-  import type { Employee, EventLogEntry } from "$lib/types"
+  import type { Employee, EventLog } from "$lib/types"
 
   let { user, allEmployees, recentLogs }: {
     user: AuthUser
     allEmployees: Employee[]
-    recentLogs: EventLogEntry[]
+    recentLogs: EventLog[]
   } = $props()
 
   const adminStats = $derived((() => {

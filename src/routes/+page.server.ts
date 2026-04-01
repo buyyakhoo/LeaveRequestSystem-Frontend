@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from './$types'
 import { AUTH_COOKIE } from '$lib/auth'
 import { env } from '$env/dynamic/private'
 
-import type { Employee, LeaveRequest, EventLogEntry, LeaveSummary } from '$lib/types';
+import type { Employee, LeaveRequest, EventLog, LeaveSummary } from '$lib/types';
 export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (!locals.user) redirect(302, '/auth')
 
@@ -41,8 +41,8 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
     const allEmployees: Employee[] = empRes.ok
       ? ((await empRes.json()) as { data: Employee[] }).data
       : []
-    const recentLogs: EventLogEntry[] = logsRes.ok
-      ? ((await logsRes.json()) as { data: EventLogEntry[] }).data
+    const recentLogs: EventLog[] = logsRes.ok
+      ? ((await logsRes.json()) as { data: EventLog[] }).data
       : []
     return { ...base, allEmployees, recentLogs }
   }

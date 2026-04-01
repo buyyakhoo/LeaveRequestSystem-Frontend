@@ -4,34 +4,36 @@
   import type { Employee } from '$lib/types'
   import type { ActionData } from '../../../routes/resign/$types';
 
-  let { users, form }: { users: Employee[]; form: ActionData } = $props()
+  let { users: initialUsers, form }: { users: Employee[]; form: ActionData } = $props()
 
-  let resigned = $state<Set<string>>(new Set())
-  const activeUsers = $derived(
-    users.filter(e => !resigned.has(e.id))
+  // Remove promoted employee from list reactively
+  let promoted = $state<Set<string>>(new Set())
+  const users = $derived(
+    initialUsers.filter(e => !promoted.has(e.id))
   )
-  
-  let search = $state('')
+
+  let search = $state("")
 
   const filtered = $derived((() => {
     const q = search.trim().toLowerCase()
     if (!q) return users
     return users.filter(e =>
       `${e.first_name} ${e.last_name}`.toLowerCase().includes(q) ||
-      (e.email ?? '').toLowerCase().includes(q) ||
-      (e.employee_code ?? '').toLowerCase().includes(q)
+      (e.email ?? "").toLowerCase().includes(q) ||
+      (e.employee_code ?? "").toLowerCase().includes(q)
     )
   })())
 
-  let lastResignedName = $state('')
+  // Track last promoted name for success message
+  let lastPromotedName = $state("")
 
   $effect(() => {
-    if (form && 'success' in form && form.success && form.id) {
-      const emp = users.find(e => e.id === form.id);
+    if (form && "success" in form && form.success && form.id) {
+      const emp = initialUsers.find(e => e.id === form.id)
       if (emp) {
-        lastResignedName = `${emp.first_name} ${emp.last_name}`
-        resigned.add(form.id)
-        resigned = new Set(resigned)
+        lastPromotedName = `${emp.first_name} ${emp.last_name}`
+        promoted.add(form.id)
+        promoted = new Set(promoted) // trigger reactivity
       }
     }
   })
@@ -39,21 +41,22 @@
 
 <div class="flex flex-col flex-1 min-h-0 space-y-4">
 
-  {#if form && 'error' in form && form.error}
+  {#if form && "error" in form && form.error}
     <Alert type="error">{form.error}</Alert>
   {/if}
 
-  {#if lastResignedName}
-    <Alert type="info">{lastResignedName} ถูกบันทึกว่าลาออกแล้ว (บัญชีถูก Disable)</Alert>
+  {#if lastPromotedName}
+    <Alert type="success">{lastPromotedName} ถูกเลื่อนยศเป็น Manager เรียบร้อยแล้ว</Alert>
   {/if}
 
   <div class="card bg-base-100 shadow-sm flex flex-col flex-1 min-h-0">
 
+    <!-- Header + search -->
     <div class="px-6 pt-5 pb-4 shrink-0 space-y-3 border-b border-base-200">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="font-semibold text-base">พนักงานที่ active</h2>
-          <p class="text-xs text-base-content/50 mt-0.5">การลาออกจะ Disable บัญชี และไม่สามารถเข้าสู่ระบบได้อีก</p>
+          <h2 class="font-semibold text-base">พนักงาน (User) ที่สามารถเลื่อนยศได้</h2>
+          <p class="text-xs text-base-content/50 mt-0.5">Department จะคงเดิม ไม่มีการเปลี่ยนแปลง</p>
         </div>
         <span class="text-sm text-base-content/50">{filtered.length} คน</span>
       </div>
@@ -69,14 +72,14 @@
           bind:value={search}
         />
         {#if search}
-          <button class="btn btn-ghost btn-xs px-1" onclick={() => search = ''}>✕</button>
+          <button class="btn btn-ghost btn-xs px-1" onclick={() => search = ""}>✕</button>
         {/if}
       </label>
     </div>
 
     {#if filtered.length === 0}
       <p class="text-base-content/50 text-sm py-16 text-center">
-        {search ? 'ไม่พบพนักงานที่ตรงกับการค้นหา' : 'ไม่มีพนักงาน Active ในระบบ'}
+        {search ? "ไม่พบพนักงานที่ตรงกับการค้นหา" : "ไม่มีพนักงาน User ในระบบ"}
       </p>
     {:else}
       <div class="flex-1 overflow-y-auto min-h-0 px-6 pb-4">
@@ -94,22 +97,28 @@
             {#each filtered as emp (emp.id)}
               <tr class="hover">
                 <td class="text-sm font-medium">{emp.first_name} {emp.last_name}</td>
-                <td class="text-sm font-mono">{emp.employee_code ?? '—'}</td>
+                <td class="text-sm font-mono">
+                  {#if emp.employee_code}
+                    {emp.employee_code}
+                  {:else}
+                    <span class="text-base-content/30">—</span>
+                  {/if}
+                </td>
                 <td class="text-sm text-base-content/70">{emp.email}</td>
-                <td class="text-sm text-base-content/70">{emp.departments?.name ?? '—'}</td>
+                <td class="text-sm text-base-content/70">{emp.departments?.name ?? "—"}</td>
                 <td>
-                  <form method="POST" action="?/resign" use:enhance>
+                  <form method="POST" action="?/promote" use:enhance>
                     <input type="hidden" name="id" value={emp.id} />
                     <button
                       type="submit"
-                      class="btn btn-error btn-xs"
+                      class="btn btn-primary btn-xs"
                       onclick={(e) => {
-                        if (!confirm(`บันทึกการลาออกของ "${emp.first_name} ${emp.last_name}"?\nบัญชีจะถูก Disable ทันที`)) {
+                        if (!confirm(`เลื่อนยศ "${emp.first_name} ${emp.last_name}" เป็น Manager?`)) {
                           e.preventDefault()
                         }
                       }}
                     >
-                      ลาออก
+                      เลื่อนเป็น Manager
                     </button>
                   </form>
                 </td>
