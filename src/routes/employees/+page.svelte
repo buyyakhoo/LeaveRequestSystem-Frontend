@@ -91,7 +91,10 @@
                   {/if}
                 </td>
                 <td>
-                  <a href="/employees/{emp.id}/edit" class="btn btn-ghost btn-xs">แก้ไข</a>
+                  <a
+                    href="/employees/{emp.id}/edit"
+                    class="btn btn-ghost btn-xs {emp.status === 'disabled' ? 'pointer-events-none text-base-content/30' : ''}"
+                  >แก้ไข</a>
                 </td>
               </tr>
             {/each}

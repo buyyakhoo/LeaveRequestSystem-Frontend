@@ -8,6 +8,7 @@
 
   const user = $derived(data.user!)
   const emp = $derived(data.employee)
+  const isDisabled = $derived(emp.status === 'DISABLED')
   const departments = $derived(data.departments)
 
   let employeeCode = $state('')
@@ -45,6 +46,10 @@
       </div>
     </div>
 
+    {#if isDisabled}
+      <Alert type="info">ไม่สามารถแก้ไขข้อมูลพนักงานที่ถูกปิดการใช้งานได้</Alert>
+    {/if}
+
     <!-- Edit form -->
     <div class="card bg-base-100 shadow-sm">
       <div class="card-body gap-5">
@@ -72,7 +77,7 @@
                 name="employeeCode"
                 bind:value={employeeCode}
                 placeholder="EMP001"
-                disabled={isLoading}
+                disabled={isLoading || isDisabled}
               />
               <span class="fieldset-label text-base-content/50">ตั้งได้ครั้งเดียว ไม่สามารถแก้ไขภายหลัง</span>
             </fieldset>
@@ -91,7 +96,7 @@
               class="select select-bordered w-full"
               name="departmentId"
               bind:value={departmentId}
-              disabled={isLoading}
+              disabled={isLoading || isDisabled}
             >
               <option value="">— ไม่เปลี่ยนแปลง —</option>
               {#each departments as dept}
@@ -105,7 +110,7 @@
             <button
               type="submit"
               class="btn btn-primary"
-              disabled={isLoading || (emp.employee_code !== null && !departmentId)}
+              disabled={isLoading || isDisabled || (emp.employee_code !== null && !departmentId)}
             >
               {#if isLoading}
                 <span class="loading loading-spinner loading-sm"></span>
