@@ -3,45 +3,7 @@ import type { Actions, PageServerLoad } from './$types'
 import { AUTH_COOKIE } from '$lib/auth'
 import { env } from '$env/dynamic/private'
 
-export interface Employee {
-  id: string
-  employee_code: string | null
-  email: string
-  first_name: string
-  last_name: string
-  role: string
-  status: string
-  created_at: string
-  departments: { id: number; name: string } | null
-}
-
-export interface LeaveRequest {
-  id: string
-  employee_id: string
-  leave_type: string
-  start_date: string
-  end_date: string
-  reason: string
-  delegate_name: string | null
-  status: string
-  created_at: string
-  employee: { first_name: string; last_name: string; department_id: number; email: string } | null
-}
-
-export interface EventLogEntry {
-  id: string
-  actor_role: string
-  action: string
-  timestamp: string
-  actor: { email: string } | null
-}
-
-export interface LeaveSummary {
-  pending_count: number
-  total_days_this_year: number
-  by_type: Record<string, number>
-}
-
+import type { Employee, LeaveRequest, EventLogEntry, LeaveSummary } from '$lib/types';
 export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (!locals.user) redirect(302, '/auth')
 
@@ -53,9 +15,10 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
   const headers = { Authorization: `Bearer ${locals.token}` }
 
   if (locals.user.role === 'user') {
-    const [summaryRes, leavesRes] = await Promise.all([
+    const [summaryRes, leavesRes, currentUserEmpRes] = await Promise.all([
       fetch(`${env.API_BASE}/leaves/summary`, { headers }),
       fetch(`${env.API_BASE}/leaves`, { headers }),
+      fetch(`${env.API_BASE}/employees/me`, { headers }),
     ])
     const summary: LeaveSummary = summaryRes.ok
       ? await summaryRes.json()
@@ -63,11 +26,14 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
     const myLeaves: LeaveRequest[] = leavesRes.ok
       ? ((await leavesRes.json()) as { data: LeaveRequest[] }).data
       : []
-    return { ...base, summary, myLeaves }
+    const currentUserEmployee: Employee | null = currentUserEmpRes.ok
+      ? (await currentUserEmpRes.json()) as Employee
+      : null;
+    return { ...base, summary, myLeaves, currentUserEmployee }
   }
 
   if (locals.user.role === 'admin') {
-    const todayStr = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+    const todayStr = new Date().toISOString().slice(0, 10)
     const [empRes, logsRes] = await Promise.all([
       fetch(`${env.API_BASE}/employees`, { headers }),
       fetch(`${env.API_BASE}/event-logs?from=${todayStr}&limit=500`, { headers }),
@@ -83,10 +49,11 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 
   if (locals.user.role !== 'manager') return base
 
-  const [empRes, pendingRes, allLeavesRes] = await Promise.all([
+  const [empRes, pendingRes, allLeavesRes, currentManagerEmpRes] = await Promise.all([
     fetch(`${env.API_BASE}/employees`, { headers }),
     fetch(`${env.API_BASE}/leaves?status=pending`, { headers }),
     fetch(`${env.API_BASE}/leaves`, { headers }),
+    fetch(`${env.API_BASE}/employees/me`, { headers }), // Fetch current manager's full employee data
   ])
 
   const employees: Employee[] = empRes.ok
@@ -107,7 +74,11 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
       )
     : []
 
-  return { ...base, employees, pendingLeaves, allLeaves }
+  const currentManagerEmployee: Employee | null = currentManagerEmpRes.ok // Added currentManagerEmployee
+    ? (await currentManagerEmpRes.json()) as Employee
+    : null;
+
+  return { ...base, employees, pendingLeaves, allLeaves, currentManagerEmployee }
 }
 
 export const actions: Actions = {

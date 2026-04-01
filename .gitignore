@@ -9,6 +9,7 @@ node_modules
 /build
 .claudeignore
 litellm_config.yaml
+/.vscode
 
 # OS
 .DS_Store

@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 import { env } from '$env/dynamic/private'
-import type { Employee } from '../+page.server'
+import type { Employee } from '$lib/types'
 
 export const load: PageServerLoad = async ({ locals, fetch }) => {
   if (!locals.user) redirect(302, '/auth')
@@ -15,7 +15,6 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
     ? ((await res.json()) as { data: Employee[] }).data
     : []
 
-  // แสดงเฉพาะ user role + active (manager จะเห็นแค่แผนกตัวเอง เพราะ backend กรองให้)
   const users = all.filter(e => e.role === 'user' && e.status === 'active')
 
   return { user: locals.user, users }
@@ -44,4 +43,3 @@ export const actions: Actions = {
   },
 }
 
-export {type Employee} from '../+page.server'

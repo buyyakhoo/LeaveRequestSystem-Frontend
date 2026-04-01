@@ -40,7 +40,7 @@ export const leaveTypeLabel: Record<string, string> = {
 export const roleLabel: Record<string, string> = {
   admin:   'Administrator',
   manager: 'Manager',
-  user:    'Employee',
+  user:    'User',
 }
 
 export const actionLabel: Record<string, string> = {
