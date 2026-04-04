@@ -1,7 +1,7 @@
 services:
   frontend:
     build: .
-    image: leaverequestsystem_frontend
+    image: buyyakhoo/leaverequestsystem-frontend:latest
     ports:
       - "4173:4173"
     environment:
@@ -9,8 +9,8 @@ services:
       - CLIENT_ID=${CLIENT_ID}
       - CLIENT_SECRET=${CLIENT_SECRET}
       - API_BASE=${API_BASE}
-      - PORT=4173
-      - ORIGIN=http://localhost:4173
+      - PORT=${PORT}
+      - ORIGIN=${ORIGIN}
       - PROTOCOL_HEADER=x-forwarded-proto
       - HOST_HEADER=x-forwarded-host
     networks:
