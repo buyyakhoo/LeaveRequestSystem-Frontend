@@ -6,8 +6,6 @@ services:
       - "4173:4173"
     environment:
       - NODE_ENV=${NODE_ENV}
-      - CLIENT_ID=${CLIENT_ID}
-      - CLIENT_SECRET=${CLIENT_SECRET}
       - API_BASE=${API_BASE}
       - PORT=${PORT}
       - ORIGIN=${ORIGIN}
