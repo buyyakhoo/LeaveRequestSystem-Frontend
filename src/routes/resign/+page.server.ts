@@ -37,7 +37,7 @@ export const actions: Actions = {
     try {
       const json = await res.json() as { error?: string }
       if (json.error) errorMsg = json.error
-    } catch { /* ignore */ }
+    } catch { }
 
     return fail(res.status, { error: errorMsg, id })
   },

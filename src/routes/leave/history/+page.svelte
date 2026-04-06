@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types'
-  import type { LeaveRequest } from '../../+page.server'
+  import type { LeaveRequest } from '$lib/types'
   import AppLayout from '$lib/components/AppLayout.svelte'
   import LeaveStatusBadge from '$lib/components/LeaveStatusBadge.svelte'
   import { leaveTypeLabel, formatDate, calcDays } from '$lib/utils'

@@ -26,7 +26,6 @@
   const latestLogs = $derived(recentLogs.slice(0, 10))
 </script>
 
-<!-- ─── Admin: stat cards ────────────────────────────────────────────── -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
   <StatCard label="ผู้ใช้งานทั้งหมด" value={adminStats.total} subtitle="{adminStats.newThisMonth} รายการเพิ่มเดือนนี้" />
   <StatCard label="Manager" value={adminStats.managers} subtitle="Active" valueClass="text-primary" />
@@ -34,10 +33,8 @@
   <StatCard label="Event Log วันนี้" value={adminStats.logsToday} subtitle="entries" />
 </div>
 
-<!-- ─── Admin: two-column tables ─────────────────────────────────────── -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-  <!-- HR Officers list -->
   <div class="card bg-base-100 shadow-sm">
     <div class="card-body gap-4">
       <h3 class="font-semibold text-base">Manager</h3>
@@ -74,7 +71,6 @@
     </div>
   </div>
 
-  <!-- Recent event log -->
   <div class="card bg-base-100 shadow-sm">
     <div class="card-body gap-4">
       <div class="flex items-center justify-between">

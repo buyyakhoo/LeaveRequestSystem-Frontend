@@ -15,7 +15,6 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
     ? ((await res.json()) as { data: Employee[] }).data
     : []
 
-  // แสดงเฉพาะ active user (ไม่รวม manager, admin, disabled)
   const users = employees.filter(e => e.role === 'user' && e.status === 'active')
 
   return { user: locals.user, users }

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types'
-  import type { Employee } from './+page.server'
+  import type { Employee } from '$lib/types'
   import AppLayout from '$lib/components/AppLayout.svelte'
 
   let { data }: { data: PageData } = $props()

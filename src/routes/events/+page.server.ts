@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
     console.error('[/events] logs API error:', logsRes.status, await logsRes.text())
   }
 
-  // Build leaveId → employee email map
+  // Build leaveId: employee email map
   const leaveEmailMap = new Map<string, string>()
   if (leavesRes.ok) {
     const body = await leavesRes.json() as {

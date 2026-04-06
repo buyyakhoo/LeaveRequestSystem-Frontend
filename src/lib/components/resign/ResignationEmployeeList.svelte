@@ -7,9 +7,6 @@
   let { users, form }: { users: Employee[]; form: ActionData } = $props()
 
   let resigned = $state<Set<string>>(new Set())
-  const activeUsers = $derived(
-    users.filter(e => !resigned.has(e.id))
-  )
   
   let search = $state('')
 

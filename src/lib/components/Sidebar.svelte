@@ -11,13 +11,11 @@
 
 <aside class="w-64 h-full bg-base-100 border-r border-base-200 flex flex-col">
 
-  <!-- App name + role badge -->
   <div class="p-5 border-b border-base-200">
     <p class="font-bold text-lg leading-tight">Leave Request System</p>
     <span class="badge badge-outline badge-sm mt-2">{roleLabel[user.role] ?? user.role}</span>
   </div>
 
-  <!-- Nav -->
   <nav class="flex-1 p-3 overflow-y-auto">
     <ul class="menu menu-md gap-1 p-0">
 
@@ -115,7 +113,6 @@
     </ul>
   </nav>
 
-  <!-- User section — คลิกเพื่อไปหน้า Profile -->
   <div class="p-4 border-t border-base-200 space-y-3">
     <a
       href="/profile"

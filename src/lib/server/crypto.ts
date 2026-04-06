@@ -18,7 +18,7 @@ export function encrypt(plaintext: string): string {
 
 /**
  * Decrypts a value produced by encrypt().
- * Throws if the ciphertext is tampered or in an unrecognised format.
+ * Throws if the ciphertext is tampered or in an unrecognized format.
  */
 export function decrypt(ciphertext: string): string {
   const parts = ciphertext.split('.')

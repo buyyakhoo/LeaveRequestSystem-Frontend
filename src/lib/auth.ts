@@ -1,8 +1,7 @@
-// ─── Cookie names ─────────────────────────────────────────────────────────────
+// Cookie names
 export const AUTH_COOKIE = 'auth_token'
-export const USER_COOKIE = 'auth_user'
 
-// ─── OWASP Password Policy ────────────────────────────────────────────────────
+// OWASP Password Policy
 // https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
 export const PASSWORD_MIN_LENGTH = 15
 export const PASSWORD_MAX_LENGTH = 128
@@ -37,7 +36,7 @@ export function validatePassword(password: string): PasswordValidationResult {
   return { valid: errors.length === 0, errors }
 }
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// Types
 export interface AuthUser {
   id: number
   employee_code: string | null
@@ -53,7 +52,6 @@ export interface LoginResponse {
   user: AuthUser
 }
 
-// ─── JWT decode (no signature verification — trust the backend) ───────────────
 export interface JwtPayload {
   sub: number
   email: string

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { enhance } from '$app/forms'
   import StatCard from "$lib/components/StatCard.svelte"
   import LeaveStatusBadge from "$lib/components/LeaveStatusBadge.svelte"
   import { leaveTypeLabel, formatDate, calcDays } from "$lib/utils"
@@ -16,7 +15,6 @@
   } = $props()
 </script>
 
-<!-- ─── User: summary cards ──────────────────────────────────────────── -->
 <p class="text-sm text-base-content/70 mb-4">
   แผนก: {currentUserEmployee?.departments?.name ?? "—"}
 </p>
@@ -40,7 +38,6 @@
   </div>
 </div>
 
-<!-- ─── User: leave history (preview 6) ────────────────────────────── -->
 <div class="card bg-base-100 shadow-sm">
   <div class="card-body gap-4">
     <div class="flex items-center justify-between">

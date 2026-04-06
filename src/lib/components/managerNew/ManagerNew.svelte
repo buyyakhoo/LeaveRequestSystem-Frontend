@@ -79,7 +79,6 @@
         class="flex flex-col gap-4"
         novalidate
       >
-        <!-- ชื่อ + นามสกุล -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <fieldset class="fieldset">
             <legend class="fieldset-legend"
@@ -112,7 +111,6 @@
           </fieldset>
         </div>
 
-        <!-- อีเมล -->
         <fieldset class="fieldset">
           <legend class="fieldset-legend"
             >อีเมล <span class="text-error">*</span></legend
@@ -135,7 +133,6 @@
           {/if}
         </fieldset>
 
-        <!-- แผนก + รหัสพนักงาน -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <fieldset class="fieldset">
             <legend class="fieldset-legend"
@@ -173,7 +170,6 @@
           </fieldset>
         </div>
 
-        <!-- รหัสผ่าน -->
         <PasswordInput bind:value={password} disabled={isLoading} />
 
         <!-- Actions -->

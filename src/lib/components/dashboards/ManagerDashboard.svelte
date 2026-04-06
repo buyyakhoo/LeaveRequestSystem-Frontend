@@ -29,7 +29,6 @@
   })())
 </script>
 
-<!-- ─── Manager: stat cards ─────────────────────────────────────────── -->
 <p class="text-sm text-base-content/70 mb-4">
   แผนก: {currentManagerEmployee?.departments?.name ?? "—"}
 </p>
@@ -45,7 +44,6 @@
   }).length} subtitle="คำร้อง" valueClass="text-primary" />
 </div>
 
-<!-- ─── Manager: employee list + pending requests ──────────────────── -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
   <div class="card bg-base-100 shadow-sm">

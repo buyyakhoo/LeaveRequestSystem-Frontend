@@ -1,11 +1,9 @@
 <script lang="ts">
-  // Note: Ensure this import path matches your actual project structure
   import type { EventLog } from '$lib/types' 
   import { actionLabel, formatTimestamp } from '$lib/utils'
 
   let { logs }: { logs: EventLog[] } = $props()
 
-  // ─── Filter state ──────────────────────────────────────────────────────────
   let filterAction = $state('')
   let filterFrom = $state('')
   let filterTo = $state('')
@@ -41,7 +39,6 @@
   
   <div class="flex flex-col flex-1 min-h-0 card bg-base-100 shadow-sm">
 
-    <!-- Header + filters -->
     <div class="px-6 pt-5 pb-4 shrink-0 space-y-3 border-b border-base-200">
       <div class="flex items-center justify-between">
         <h2 class="font-semibold text-base">Event Log ทั้งหมด</h2>
@@ -65,7 +62,6 @@
           </select>
         </div>
 
-        <!-- From date -->
         <div class="flex flex-col gap-1">
           <span class="text-xs text-base-content/50">ตั้งแต่วันที่</span>
           <input
@@ -75,7 +71,6 @@
           />
         </div>
 
-        <!-- To date -->
         <div class="flex flex-col gap-1">
           <span class="text-xs text-base-content/50">ถึงวันที่</span>
           <input
