@@ -39,6 +39,27 @@
   </label>
 
   {#if pwResult}
+    <div class="mt-2 flex items-center gap-2">
+      <div
+        class="h-2 rounded-full flex-grow"
+        class:bg-error={pwResult.strength === 'weak'}
+        class:bg-warning={pwResult.strength === 'moderate'}
+        class:bg-success={pwResult.strength === 'strong'}
+        class:bg-info={pwResult.strength === 'passphrase'}
+      ></div>
+      <span
+        class="text-xs font-semibold"
+        class:text-error={pwResult.strength === 'weak'}
+        class:text-warning={pwResult.strength === 'moderate'}
+        class:text-success={pwResult.strength === 'strong'}
+        class:text-info={pwResult.strength === 'passphrase'}
+      >
+        {pwResult.strength === 'weak' ? 'อ่อน' : ''}
+        {pwResult.strength === 'moderate' ? 'ปานกลาง' : ''}
+        {pwResult.strength === 'strong' ? 'แข็งแรง' : ''}
+        {pwResult.strength === 'passphrase' ? 'ปลอดภัยมาก' : ''}
+      </span>
+    </div>
     <ul class="mt-2 space-y-1">
       {#each pwResult.errors as err}
         <li class="fieldset-label text-error flex items-center gap-1">

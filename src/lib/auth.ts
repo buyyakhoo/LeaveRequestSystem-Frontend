@@ -2,9 +2,12 @@ export const AUTH_COOKIE = 'auth_token'
 export const PASSWORD_MIN_LENGTH = 15
 export const PASSWORD_MAX_LENGTH = 128
 
+export type PasswordStrength = 'weak' | 'moderate' | 'strong' | 'passphrase'
+
 export interface PasswordValidationResult {
   valid: boolean
   errors: string[]
+  strength: PasswordStrength
 }
 
 export function validatePassword(password: string): PasswordValidationResult {
@@ -18,7 +21,22 @@ export function validatePassword(password: string): PasswordValidationResult {
   }
 
   if (password.length >= 64) {
-    return { valid: errors.length === 0, errors }
+    return { valid: errors.length === 0, errors, strength: 'passphrase' }
+  }
+
+  let strength: PasswordStrength = 'weak'
+  const characterTypes = [
+    /[A-Z]/.test(password),
+    /[a-z]/.test(password),
+    /\d/.test(password),
+    /[^A-Za-z0-9]/.test(password),
+  ]
+  const uniqueCharacterTypes = characterTypes.filter(Boolean).length
+
+  if (password.length >= PASSWORD_MIN_LENGTH && uniqueCharacterTypes >= 4) {
+    strength = 'strong'
+  } else if (password.length >= 10 && uniqueCharacterTypes >= 3) {
+    strength = 'moderate'
   }
 
   if (!/[A-Z]/.test(password)) {
@@ -34,7 +52,7 @@ export function validatePassword(password: string): PasswordValidationResult {
     errors.push('At least one special character (e.g. !@#$%)')
   }
 
-  return { valid: errors.length === 0, errors }
+  return { valid: errors.length === 0, errors, strength }
 }
 
 export interface AuthUser {
