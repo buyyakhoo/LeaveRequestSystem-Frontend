@@ -4,7 +4,7 @@ export const USER_COOKIE = 'auth_user'
 
 // ─── OWASP Password Policy ────────────────────────────────────────────────────
 // https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
-export const PASSWORD_MIN_LENGTH = 8
+export const PASSWORD_MIN_LENGTH = 15
 export const PASSWORD_MAX_LENGTH = 128
 
 export interface PasswordValidationResult {
