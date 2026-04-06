@@ -1,8 +1,4 @@
-// Cookie names
 export const AUTH_COOKIE = 'auth_token'
-
-// OWASP Password Policy
-// https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
 export const PASSWORD_MIN_LENGTH = 15
 export const PASSWORD_MAX_LENGTH = 128
 
@@ -20,6 +16,11 @@ export function validatePassword(password: string): PasswordValidationResult {
   if (password.length > PASSWORD_MAX_LENGTH) {
     errors.push(`Must not exceed ${PASSWORD_MAX_LENGTH} characters`)
   }
+
+  if (password.length >= 64) {
+    return { valid: errors.length === 0, errors }
+  }
+
   if (!/[A-Z]/.test(password)) {
     errors.push('At least one uppercase letter (A–Z)')
   }
@@ -36,7 +37,6 @@ export function validatePassword(password: string): PasswordValidationResult {
   return { valid: errors.length === 0, errors }
 }
 
-// Types
 export interface AuthUser {
   id: number
   employee_code: string | null

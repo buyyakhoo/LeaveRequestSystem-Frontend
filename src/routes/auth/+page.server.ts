@@ -4,14 +4,14 @@ import { decodeToken, AUTH_COOKIE } from '$lib/auth'
 import { loginApi } from '$lib/server/api'
 
 const oauthErrorMessages: Record<string, string> = {
-  not_employee: 'This Google account is not registered as an employee.',
-  account_disabled: 'Your account has been disabled. Contact HR.',
-  google_mismatch: 'This Google account does not match the one linked to your email.',
-  oauth_denied: 'Google sign-in was cancelled.',
-  invalid_callback: 'Invalid sign-in callback. Please try again.',
-  invalid_state: 'Security check failed. Please try again.',
-  invalid_token: 'Authentication failed. Please try again.',
-  server_error: 'An error occurred. Please try again.',
+  not_employee: 'สิทธิ์การใช้งานของคุณไม่ถูกต้อง',
+  account_disabled: 'บัญชีนี้ไม่สามารถเข้าใช้งานได้ในขณะนี้ โปรดติดต่อผู้ดูแลระบบ',
+  google_mismatch: 'ข้อมูลบัญชีไม่ถูกต้อง',
+  oauth_denied: 'การยืนยันตัวตนถูกยกเลิก โปรดลองอีกครั้ง',
+  invalid_callback: 'เกิดข้อผิดพลาดในขั้นตอนการเข้าสู่ระบบ กรุณาลองใหม่อีกครั้ง',
+  invalid_state: 'เซสชันหมดอายุหรือเกิดข้อผิดพลาดด้านความปลอดภัย กรุณาลองใหม่อีกครั้ง',
+  invalid_token: 'ข้อมูลการยืนยันตัวตนไม่ถูกต้อง',
+  server_error: 'เกิดข้อผิดพลาดของระบบ กรุณาลองใหม่อีกครั้งในภายหลัง',
 }
 
 export const load: PageServerLoad = ({ locals, url }) => {
