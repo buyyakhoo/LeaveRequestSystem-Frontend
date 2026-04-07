@@ -59,6 +59,12 @@
           </a>
         </li>
         <li>
+          <a href="/leave/manage" class={currentPath === '/leave/manage' ? 'active' : ''} onclick={onClose}>
+            <CalendarOff class="size-4" />
+            จัดการคำร้องอนุมัติ
+          </a>
+        </li>
+        <li>
           <a href="/leave/all" class={currentPath === '/leave/all' ? 'active' : ''} onclick={onClose}>
             <CalendarOff class="size-4" />
             ประวัติการลา

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types'
-  import type { LeaveRequest } from './+page.server'
+  import type { LeaveRequest } from '$lib/types'
   import AppLayout from '$lib/components/AppLayout.svelte'
   import LeaveStatusBadge from '$lib/components/LeaveStatusBadge.svelte'
   import { leaveTypeLabel, formatDate, calcDays } from '$lib/utils'
@@ -49,7 +49,6 @@
 <AppLayout {user} title="ประวัติการลาทั้งหมด">
   <div class="flex flex-col flex-1 min-h-0 card bg-base-100 shadow-sm">
 
-    <!-- Header + filters -->
     <div class="px-6 pt-5 pb-4 shrink-0 space-y-3 border-b border-base-200">
       <div class="flex items-center justify-between">
         <h2 class="font-semibold text-base">คำร้องลาทั้งหมด</h2>
@@ -60,7 +59,6 @@
 
       <div class="flex flex-wrap gap-2 items-end">
 
-        <!-- Search -->
         <label class="input input-sm input-bordered flex items-center gap-2 w-56">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 opacity-50 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
@@ -73,7 +71,6 @@
           />
         </label>
 
-        <!-- Status filter -->
         <div class="flex flex-col gap-1">
           <span class="text-xs text-base-content/50">สถานะ</span>
           <select class="select select-sm select-bordered w-36" bind:value={filterStatus}>
@@ -84,7 +81,6 @@
           </select>
         </div>
 
-        <!-- Type filter -->
         <div class="flex flex-col gap-1">
           <span class="text-xs text-base-content/50">ประเภทการลา</span>
           <select class="select select-sm select-bordered w-36" bind:value={filterType}>
