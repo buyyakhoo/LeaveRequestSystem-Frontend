@@ -1,5 +1,3 @@
-// ─── Date utilities ───────────────────────────────────────────────────────────
-
 export function formatDate(d: string): string {
   return new Date(d).toLocaleDateString('th-TH', {
     day: 'numeric', month: 'short', year: '2-digit',
@@ -20,13 +18,9 @@ export function calcDays(start: string, end: string): number {
   return Math.round(diff / (1000 * 60 * 60 * 24)) + 1
 }
 
-// ─── Validation ───────────────────────────────────────────────────────────────
-
 export function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  return /^[^@\s]{1,64}@[^@\s]{1,255}\.[^@\s]{2,63}$/.test(email)
 }
-
-// ─── Label maps ───────────────────────────────────────────────────────────────
 
 export const leaveTypeLabel: Record<string, string> = {
   sick:      'ลาป่วย',
